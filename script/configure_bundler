@@ -5,6 +5,8 @@ require_relative "../config/bundler_helper"
 
 rails_env = BundlerHelper.rails_env
 database = BundlerHelper.database
+system = `uname`
+jobs = 2
 
 puts "Configuring Bundler for #{rails_env} environment and #{database} database."
 
@@ -13,7 +15,12 @@ def config(option)
   system("#{File.join(__dir__, '../bin/bundle')} config --local #{option}")
 end
 
-config("jobs #{`nproc`}")
+if system =~ /Linux/
+  jobs = `nproc`
+elsif system =~/BSD/
+  jobs = `sysctl -n hw.ncpu`
+
+config("jobs #{jobs}")
 config("with #{database}")
 
 if rails_env == "production"
@@ -28,8 +35,8 @@ if rails_env != "development"
   config("disable_shared_gems true")
 end
 
-if `gcc -dumpversion`.split(".").first.to_i >= 5
-  config("build.sigar \"--with-cppflags='-fgnu89-inline'\"")
+if system ~= /Linux/ && `gcc -dumpversion`.split(".").first.to_i >= 5
+    config("build.sigar \"--with-cppflags='-fgnu89-inline'\"")
 end
 
 puts "Bundler configured! Please run 'bin/bundle install' now."
