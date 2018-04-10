@@ -17,7 +17,7 @@ end
 
 if system =~ /Linux/
   jobs = `nproc`
-elsif system =~/BSD/
+elsif system =~ /BSD/
   jobs = `sysctl -n hw.ncpu`
 
 config("jobs #{jobs}")
@@ -35,7 +35,7 @@ if rails_env != "development"
   config("disable_shared_gems true")
 end
 
-if system ~= /Linux/ && `gcc -dumpversion`.split(".").first.to_i >= 5
+if system =~ /Linux/ && `gcc -dumpversion`.split(".").first.to_i >= 5
     config("build.sigar \"--with-cppflags='-fgnu89-inline'\"")
 end
 
