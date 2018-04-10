@@ -19,6 +19,7 @@ if system =~ /Linux/
   jobs = `nproc`
 elsif system =~ /BSD/
   jobs = `sysctl -n hw.ncpu`
+end
 
 config("jobs #{jobs}")
 config("with #{database}")
@@ -36,7 +37,7 @@ if rails_env != "development"
 end
 
 if system =~ /Linux/ && `gcc -dumpversion`.split(".").first.to_i >= 5
-    config("build.sigar \"--with-cppflags='-fgnu89-inline'\"")
+  config("build.sigar \"--with-cppflags='-fgnu89-inline'\"")
 end
 
 puts "Bundler configured! Please run 'bin/bundle install' now."
